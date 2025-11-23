@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>For My Love — My Forever</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#fff0f7; --bg2:#fffaf2; --accent:#ff6f96;
+    --note-w:300px; --photo-size:140px; --soft-shadow:0 18px 40px rgba(24,10,24,0.10);
+    --muted: #8b5a66;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:
+    radial-gradient(900px 420px at 8% 8%, rgba(255,220,235,0.55), transparent 8%),
+    linear-gradient(180deg,var(--bg1),#fff 74%); color:#3b2a31; -webkit-font-smoothing:antialiased;}
+  /* --- DOODLE WALLPAPER (full screen) --- */
+  .bg-doodle{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.95}
+  /* --- FLOATING HEARTS (full-screen, bigger effect) --- */
+  .hearts{position:fixed;right:10px;bottom:10px;z-index:40;pointer-events:none;display:flex;flex-direction:column;gap:10px}
+  .heart{width:20px;height:20px;opacity:0.95;animation:floatUp 5s linear infinite}
+  .heart:nth-child(2){animation-duration:5.6s;transform:scale(.9)}
+  .heart:nth-child(3){animation-duration:4.8s;transform:scale(.78)}
+  @keyframes floatUp{0%{transform:translateY(0) scale(1) rotate(0);opacity:1}40%{transform:translateY(-26vh) scale(1.06) rotate(-6deg);opacity:1}100%{transform:translateY(-60vh) scale(.9);opacity:0}}
+  /* --- TOP SPARKLES --- */
+  .sparkles{position:fixed;left:14px;top:12px;z-index:40;pointer-events:none}
+  .spark{animation:twinkle 3.4s infinite}
+  @keyframes twinkle{0%{opacity:.6;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}100%{opacity:.8;transform:scale(.95)}}
+
+  /* --- INTRO (centered) --- */
+  .intro{min-height:100vh;display:flex;align-items:center;justify-content:center;z-index:50;position:relative;padding:28px}
+  .intro-card{background:linear-gradient(135deg,#ffdfe9,#fff1f6);border-radius:18px;padding:28px 26px;text-align:center;box-shadow:0 30px 80px rgba(150,36,80,0.12);max-width:640px}
+  .intro-card h1{margin:0;font-size:32px;color:#b71f53}
+  .intro-card p{margin:10px 0 0;color:var(--muted)}
+  .enter-btn{margin-top:18px;padding:12px 28px;border-radius:999px;border:0;background:#ff4f87;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 12px 36px rgba(255,79,135,0.16);font-size:15px}
+  .small-play{display:inline-block;margin-left:10px;font-size:13px;opacity:.9;color:#fff;background:rgba(0,0,0,0.08);padding:6px 10px;border-radius:10px}
+
+  /* --- STAGE & GRID --- */
+  .stage{display:none;position:relative;z-index:10;padding:36px 12px 120px}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;padding-bottom:40px}
+  .grid{display:flex;flex-direction:column;gap:26px}
+
+  /* --- ROWS: note + photo --- */
+  .row{display:flex;gap:20px;align-items:flex-start;justify-content:space-between;opacity:0;transform:translateY(20px);transition:all .6s cubic-bezier(.2,.9,.25,1)}
+  .row.show{opacity:1;transform:translateY(0)}
+  @media(max-width:920px){.row{flex-direction:column;align-items:center}}
+
+  /* --- STICKY NOTE --- */
+  .note{width:var(--note-w);min-height:140px;background:linear-gradient(180deg,#fffef8,#fff7f0);border-radius:12px;padding:16px;box-shadow:var(--soft-shadow);position:relative;z-index:3;transition:transform .28s ease,box-shadow .25s ease}
+  .note:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 40px 80px rgba(30,12,22,0.16)}
+  .note:before{content:"";width:86px;height:26px;background:linear-gradient(90deg,rgba(255,255,255,0.95),rgba(255,255,255,0.85));position:absolute;left:50%;transform:translateX(-50%) rotate(-4deg);top:-12px;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,0.06)}
+  .headline{font-weight:700;font-size:15px;color:#8d1f4d;margin-bottom:8px}
+  .body{font-style:italic;font-weight:500;color:#3f2b32;line-height:1.45;white-space:pre-wrap}
+
+  /* --- PHOTO (1:1) --- */
+  .photo{width:var(--photo-size);height:var(--photo-size);object-fit:cover;border-radius:12px;box-shadow:0 18px 40px rgba(20,12,28,0.12);flex-shrink:0;transition:transform .28s ease,box-shadow .25s ease}
+  .photo:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 34px 60px rgba(20,12,28,0.16)}
+  @media(max-width:920px){.photo{width:44vw;height:44vw}.note{width:86vw}}
+
+  .row.rev{flex-direction:row-reverse}
+  @media(max-width:920px){.row.rev{flex-direction:column}}
+
+  /* doodle couple layers */
+  .doodle-layer{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:0.95}
+
+  /* footer */
+  footer{text-align:center;color:#745058;margin-top:24px;font-size:14px;padding-bottom:28px}
+
+  /* small play control when autoplay blocked */
+  .music-control{position:fixed;left:14px;bottom:18px;z-index:60;background:rgba(255,255,255,0.96);padding:8px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,0.12);display:flex;gap:8px;align-items:center}
+  .music-control button{border:0;background:transparent;cursor:pointer;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- faint doodle wallpaper -->
+<div class="bg-doodle" aria-hidden>
+  <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="none">
+    <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#fff2f8"/><stop offset="1" stop-color="#fff8f2"/></linearGradient></defs>
+    <rect width="100%" height="100%" fill="url(#g1)"/>
+    <g fill="none" stroke="#ffe6ef" stroke-width="2" opacity="0.6">
+      <path d="M80 160 C240 40, 420 40, 600 160"/>
+      <path d="M120 260 C300 140, 540 140, 760 260"/>
+      <path d="M1000 80 C1100 140, 1250 50, 1320 240"/>
+    </g>
+  </svg>
+</div>
+
+<!-- floating hearts cluster -->
+<div class="hearts" aria-hidden>
+  <svg class="heart" viewBox="0 0 32 29"><path d="M23.6 0c-2.9 0-5.4 1.7-6.6 4.1C15.8 1.7 13.3 0 10.4 0 4.6 0 0 4.8 0 10.8c0 6.4 5 11.6 12.4 18.1l3.6 3.1c.7.6 1.9.6 2.6 0l3.6-3.1C27 22.4 32 17.2 32 10.8 32 4.8 27.4 0 21.6 0z" fill="#ffb1c9"/></svg>
+  <svg class="heart" viewBox="0 0 32 29"><path d="M23.6 0c-2.9 0-5.4 1.7-6.6 4.1C15.8 1.7 13.3 0 10.4 0 4.6 0 0 4.8 0 10.8c0 6.4 5 11.6 12.4 18.1l3.6 3.1c.7.6 1.9.6 2.6 0l3.6-3.1C27 22.4 32 17.2 32 10.8 32 4.8 27.4 0 21.6 0z" fill="#ffd9e9"/></svg>
+  <svg class="heart" viewBox="0 0 32 29"><path d="M23.6 0c-2.9 0-5.4 1.7-6.6 4.1C15.8 1.7 13.3 0 10.4 0 4.6 0 0 4.8 0 10.8c0 6.4 5 11.6 12.4 18.1l3.6 3.1c.7.6 1.9.6 2.6 0l3.6-3.1C27 22.4 32 17.2 32 10.8 32 4.8 27.4 0 21.6 0z" fill="#ffc9df"/></svg>
+</div>
+
+<!-- sparkles -->
+<div class="sparkles" aria-hidden>
+  <svg width="120" height="120" viewBox="0 0 120 120">
+    <g transform="translate(6,6)" fill="none" stroke="#ffd1e6" stroke-width="1.6">
+      <path d="M10 30 C20 10, 40 10, 50 30"></path>
+      <circle cx="90" cy="20" r="2" fill="#ffbcd6" class="spark"/>
+      <circle cx="20" cy="90" r="2" fill="#ffd3e4" class="spark"/>
+    </g>
+  </svg>
+</div>
+
+<!-- couple doodles (multiple styles) -->
+<svg class="doodle-layer" aria-hidden>
+  <defs><style>.couple-line{stroke:#ffd5e4;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0.95}.couple-fill{fill:#fff0f6;opacity:0.06}</style></defs>
+  <g transform="translate(720,40) scale(0.92)"><path class="couple-line" d="M10 60 C30 20, 70 20, 90 60 M40 60 C45 75, 65 75, 70 60"/><circle cx="34" cy="44" r="2.2" fill="#ffd1e6"/><circle cx="66" cy="44" r="2.2" fill="#ffd1e6"/></g>
+  <g transform="translate(40,520) scale(1)"><path class="couple-line" d="M18 30 C30 10, 70 10, 84 30"/><path class="couple-line" d="M30 30 L30 52 C30 66, 56 66, 56 52 L56 30"/><circle cx="28" cy="22" r="3" fill="#ffd1e6"/><circle cx="56" cy="20" r="3" fill="#ffd1e6"/></g>
+  <g transform="translate(420,60) scale(0.78)"><path class="couple-line" d="M10 40 C18 18, 40 18, 50 40 M18 44 C22 56, 40 56, 44 44"/><circle cx="18" cy="30" r="2.2" fill="#ffd1e6"/><circle cx="42" cy="30" r="2.2" fill="#ffd1e6"/></g>
+  <g transform="translate(760,520) scale(0.95)"><path class="couple-line" d="M10 30 C26 10, 70 10, 86 30"/><path class="couple-fill" d="M10 30 C26 10, 70 10, 86 30 L86 50 C70 70, 26 70, 10 50 Z"/></g>
+</svg>
+
+<!-- audio (autoplay hack: muted then unmute) -->
+<audio id="bgMusic" autoplay muted loop preload="auto">
+  <source src="https://files.catbox.moe/7n6fyc.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<!-- small music control (shown when autoplay blocked) -->
+<div id="musicControl" class="music-control" style="display:none" aria-hidden>
+  <button id="playBtn">Play Music ►</button>
+  <div style="font-size:13px;color:#6b4855">Music</div>
+</div>
+
+<!-- intro -->
+<section class="intro" id="introSection">
+  <div class="intro-card" role="button" aria-label="Tap to open" tabindex="0">
+    <h1>Hello my love 💕</h1>
+    <p>A little gallery of reasons & memories — made only for you.</p>
+    <button class="enter-btn" id="enterBtn">Tap to Open & Play</button>
+  </div>
+</section>
+
+<!-- stage -->
+<section class="stage" id="stage" aria-hidden="true">
+  <div class="wrap">
+    <div id="grid" class="grid"></div>
+    <footer>Made with ❤️ — your R.</footer>
+  </div>
+</section>
+
+<script>
+/* ===== DATA (20 headlines+messages) ===== */
+const data = [
+  {h:"Why You Matter To Me", b:"“You matter to me in ways I never knew someone could matter… gently, silently, deeply.”"},
+  {h:"Why I Don’t Look At Anyone Else", b:"“I don’t search for anyone else because my heart found everything it needed in you.”"},
+  {h:"Why I Stay", b:"“I stay because with you, life feels lighter… and my heart feels understood.”"},
+  {h:"What Makes You Special", b:"“You don’t try to impress anyone, yet you impress my heart every single day.”"},
+  {h:"Why I Choose You Every Day", b:"“I choose you not because I have to, but because loving you feels right in every way.”"},
+  {h:"Why My Feelings Keep Growing", b:"“My love grows because every day I discover something more beautiful in you.”"},
+  {h:"Why You’re Irreplaceable", b:"“People may look similar… but hearts don’t. And yours is one of a kind.”"},
+  {h:"Why You Feel Like Home", b:"“You feel like home—safe, quiet, warm… something my soul can rest in.”"},
+  {h:"Why I Can’t Stay Upset With You", b:"“No matter what happens, your name has a softness my heart can’t fight.”"},
+  {h:"Why I Respect You", b:"“I don’t just love you—I respect your feelings, your silence, your boundaries, everything.”"},
+  {h:"Why You’re My Safe Space", b:"“With you, I can be vulnerable without fear… that’s rare, and that’s love.”"},
+  {h:"Why I Never Get Bored Of You", b:"“I don’t get tired of you; I get scared of a day without you.”"},
+  {h:"Why You’re Important", b:"“Your presence makes ordinary moments feel like something worth remembering.”"},
+  {h:"Why I Don’t Want ‘Perfect’", b:"“I don’t want perfect… I want real. And you’re the most real thing in my life.”"},
+  {h:"Why I Care So Much", b:"“I care because your happiness affects me more deeply than my own.”"},
+  {h:"Why You’re My Peace", b:"“You don’t just make me smile… you calm places inside me I didn’t know were loud.”"},
+  {h:"Why You’re My Only", b:"“You’re the only one whose presence feels like love and future at the same time.”"},
+  {h:"Why Forever Feels Possible", b:"“With you, forever doesn’t feel scary—it feels natural.”"},
+  {h:"Why I Don’t Give Up", b:"“I don’t give up on you because my heart has never felt this sure about anyone.”"},
+  {h:"Why You’re My Person", b:"“You’re not just someone I talk to—you’re someone my soul chooses again and again.”"}
+];
+
+/* ===== Photos (postimg direct links you provided) ===== */
+const photos = [
+  "https://i.postimg.cc/85fQxQ9K/IMG-20250804-234630-494.jpg",
+  "https://i.postimg.cc/nz9bNbg9/IMG-20250812-151730.jpg",
+  "https://i.postimg.cc/FRk5w58G/IMG-20250812-151742.jpg",
+  "https://i.postimg.cc/Tw5MBMFV/IMG-20250812-151756.jpg",
+  "https://i.postimg.cc/wvR8n8Zs/IMG-20250906-205355.jpg",
+  "https://i.postimg.cc/3wcQLJSW/IMG-20250908-204452.jpg",
+  "https://i.postimg.cc/9fnHxF8f/IMG-20250910-162635.jpg",
+  "https://i.postimg.cc/LsbFy6C2/IMG-20250910-162715.jpg",
+  "https://i.postimg.cc/1zj1W5CP/IMG-20250910-162816.jpg",
+  "https://i.postimg.cc/Gp21JsjV/IMG-20251113-225906.jpg",
+  "https://i.postimg.cc/mDnXfPCg/IMG-20250727-000536.jpg",
+  "https://i.postimg.cc/26tcR1h3/IMG-20250727-000758.jpg",
+  "https://i.postimg.cc/JnF6VsZy/IMG-20250727-001018.jpg",
+  "https://i.postimg.cc/50y7RBY0/IMG-20250804-234635-928.jpg",
+  "https://i.postimg.cc/k4G1pQ6X/IMG-20250804-234639-019.jpg",
+  "https://i.postimg.cc/V6vGVqr8/IMG-20250910-162627.jpg",
+  "https://i.postimg.cc/RFhsD73D/IMG-20250910-162744.jpg",
+  "https://i.postimg.cc/ydGQ4Dcm/kapkap-20250330030742359-sys.jpg",
+  "https://i.postimg.cc/hjYyWXT7/kapkap-20250330030950740-sys.jpg",
+  "https://i.postimg.cc/tTcSQsWZ/kapkap-20250330031022445-sys.jpg"
+];
+
+/* DOM refs */
+const grid = document.getElementById('grid');
+const enterBtn = document.getElementById('enterBtn');
+const introSection = document.getElementById('introSection');
+const stageSection = document.getElementById('stage');
+const bgMusic = document.getElementById('bgMusic');
+const musicControl = document.getElementById('musicControl');
+const playBtn = document.getElementById('playBtn');
+
+/* Build grid: alternate note + photo, photo opposite side */
+function buildGrid(){
+  let pIdx = 0;
+  photos.length = Math.min(photos.length, 20);
+  data.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    if(i%2===1) row.classList.add('rev');
+
+    const tiltNote = (i%2===0) ? ((Math.random()*3)+2)*-1 + 'deg' : ((Math.random()*3)+2) + 'deg';
+    const tiltPhoto = (i%2===0) ? ((Math.random()*3)+2) + 'deg' : ((Math.random()*3)+2)*-1 + 'deg';
+
+    // note
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.style.transform = `rotate(${tiltNote})`;
+    note.innerHTML = `<div class="headline"><strong>${escapeHtml(item.h)}</strong></div><div class="body"><em>${escapeHtml(item.b)}</em></div>`;
+
+    // photo (if available)
+    let photoEl = null;
+    if(pIdx < photos.length){
+      const img = document.createElement('img');
+      img.className = 'photo';
+      img.src = photos[pIdx];
+      img.alt = `photo ${pIdx+1}`;
+      img.style.transform = `rotate(${tiltPhoto})`;
+      img.onerror = function(){ this.style.filter='grayscale(60%)'; this.style.opacity='0.85'; };
+      photoEl = img;
+      pIdx++;
+    }
+
+    if(i%2===0){
+      row.appendChild(note);
+      if(photoEl) row.appendChild(photoEl);
+    } else {
+      if(photoEl) row.appendChild(photoEl);
+      row.appendChild(note);
+    }
+
+    grid.appendChild(row);
+  });
+}
+
+/* Escape helper */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* Stagger reveal + observe on scroll */
+function revealStagger(){
+  const rows = document.querySelectorAll('.row');
+  rows.forEach((r, idx) => setTimeout(()=> r.classList.add('show'), idx*80));
+  const obs = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); }); }, {threshold:0.15});
+  rows.forEach(r=>obs.observe(r));
+}
+
+/* START experience: hide intro, show stage, build grid, reveal, and attempt music (autoplay hack) */
+function startExperience(){
+  introSection.style.display = 'none';
+  stageSection.style.display = 'block';
+  stageSection.removeAttribute('aria-hidden');
+
+  if(!grid.dataset.built){
+    buildGrid();
+    grid.dataset.built='1';
+    setTimeout(revealStagger,120);
+  } else {
+    revealStagger();
+  }
+
+  // Attempt to play: (muted autoplay allowed); unmute after small delay
+  bgMusic.play().then(()=> {
+    // try unmute after a short delay
+    setTimeout(()=> {
+      try { bgMusic.muted = false; bgMusic.volume = 1.0; } catch(e){}
+    }, 700);
+  }).catch(err => {
+    // autoplay blocked: show manual play control
+    musicControl.style.display = 'flex';
+  });
+
+  // failsafe: if blocked, try again on user click anywhere
+  function tryPlayOnClick(){
+    if(bgMusic.paused){ bgMusic.play().catch(()=>{}); }
+    window.removeEventListener('click', tryPlayOnClick);
+  }
+  window.addEventListener('click', tryPlayOnClick);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* manual play/pause control */
+playBtn && playBtn.addEventListener('click', ()=>{
+  if(bgMusic.paused){ bgMusic.play().catch(()=>{}); playBtn.textContent = 'Pause ◼'; }
+  else { bgMusic.pause(); playBtn.textContent = 'Play Music ►'; }
+});
+
+/* small fallback: attempt unmute on first touchstart (mobile) */
+function oneTouchUnmute(){
+  if(bgMusic.muted){ try{ bgMusic.muted = false; bgMusic.volume = 1.0; }catch(e){} }
+  window.removeEventListener('touchstart', oneTouchUnmute);
+}
+window.addEventListener('touchstart', oneTouchUnmute, {passive:true});
+
+/* Event listeners to start */
+enterBtn.addEventListener('click', startExperience);
+document.querySelector('.intro-card').addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') startExperience(); });
+document.querySelector('.intro-card').addEventListener('click', startExperience);
+
+/* pause music when hidden */
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) bgMusic.pause(); });
+
+/* small helper to remove hearts older than animation time (clean) */
+setInterval(()=>{ const hs = document.querySelectorAll('.heart'); if(hs.length>20) hs[0].remove(); }, 2500);
+
+</script>
+</body>
+</html>
